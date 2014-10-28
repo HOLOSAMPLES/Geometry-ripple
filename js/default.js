@@ -7,17 +7,14 @@
  		scene = new THREE.Scene();
    
         //setup camera
- 		var VIEW_ANGLE = 2.64, ASPECT = windowWidth / windowHeight, NEAR = 0.1, FAR = 10000;
- 		camera = new LeiaCamera( VIEW_ANGLE, ASPECT, NEAR, FAR);
- 		camera.position.set(0,0,50);	
+ 		camera = new LeiaCamera();
+        camera.position.copy(_camPosition);
+        camera.lookAt(_tarPosition);
  		
         //setup rendering parameter
  		renderer = new LeiaWebGLRenderer({
          antialias:true, 
- 		renderMode: _renderMode, 
- 		camPanelVisible: _camPanelVisible, 
- 		gyroPanelVisible: _gyroPanelVisible,
- 		camFov: _camFov,    
+ 		renderMode: _renderMode,  
 		devicePixelRatio: 1 
         } );
  		renderer.Leia_setSize( windowWidth, windowHeight );
@@ -66,5 +63,5 @@ function updateStuff(){
  	requestAnimationFrame( animate );
     updateStuff();
     renderer.setClearColor(new THREE.Color().setRGB(1.0, 1.0, 1.0)); 
-	renderer.Leia_render(scene, camera,undefined,undefined,0.4);
+	renderer.Leia_render(scene, camera,undefined,undefined,_holoScreenScale,_camFov);
  }
