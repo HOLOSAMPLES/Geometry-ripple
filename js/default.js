@@ -1,4 +1,3 @@
-//FileStart:default.js 
  var windowWidth = window.innerWidth, windowHeight = window.innerHeight;
  var scene,camera,renderer;
  Init();
@@ -66,4 +65,3 @@ function updateStuff(){
     renderer.setClearColor(new THREE.Color().setRGB(1.0, 1.0, 1.0)); 
 	renderer.Leia_render(scene, camera,undefined,undefined,0.4);
  }
- //FileEnd
