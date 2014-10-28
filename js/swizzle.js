@@ -70,13 +70,13 @@ var LeiaWebGLRenderer = function (parameters) {
     //    console.log("set gyroPanelVisible:" + parameters.gyroPanelVisible);
     //}
 
-    if (parameters.camFov == undefined) {
-        this.view64fov = 50;
-        console.log("camFov undefined, set it to default 50!");
-    } else {
-        this.view64fov = parameters.camFov;
-        console.log("set camFov:" + parameters.camFov);
-    }
+    //if (parameters.camFov == undefined) {
+    //    this.view64fov = 50;
+    //    console.log("camFov undefined, set it to default 50!");
+    //} else {
+    //    this.view64fov = parameters.camFov;
+    //    console.log("set camFov:" + parameters.camFov);
+    //}
 
 
 
@@ -87,9 +87,9 @@ var LeiaWebGLRenderer = function (parameters) {
     this.setRenderMode = function (renderMode) {
         this._renderMode = renderMode;
     }
-    this.setFov = function (fov) {
-        this.view64fov = fov;
-    }
+    //this.setFov = function (fov) {
+    //    this.view64fov = fov;
+    //}
     
     // for 64 view arrangement YSCL
     this.GGyroSimView = {
@@ -586,7 +586,7 @@ var LeiaWebGLRenderer = function (parameters) {
         }
         this.show = function (oneDir) {
             this.traverse(function (child) {
-                child.visible = true;
+                child.visible = false;
                 if (child.parent == _this.pickers)
                     child.visible = bShowShell;
                 if (child.parent == _this.planes)
@@ -773,6 +773,12 @@ var LeiaWebGLRenderer = function (parameters) {
             } else {
                 _this.axisPickers[0].traverse(function (child) {
                     child.visible = !child.visible;
+                    if (child.parent == _this.axisPickers[0].pickers)
+                        child.visible = false;
+                    if (child.parent == _this.axisPickers[0].planes)
+                        child.visible = false;
+                    //if (child.parent == _this.axisPickers[0].handles)
+                    //    child.visible = false;
                 });
                 _this.object.visible = !_this.object.visible;
                 if (_this.object.name == "tarPlane") {
@@ -813,8 +819,9 @@ var LeiaWebGLRenderer = function (parameters) {
             } else if (event.detail) {
                 delta = - event.detail / 3;
             }
-            if (_this.object.name == "eyeCenter")
+            if (_this.object.name == "eyeCenter") {
                 _that.view64fov += delta * 0.1;
+            }
             if (_this.object.name == "tarPlane") {
                 _this.object.scale.x += delta * 0.01;
                 _this.object.scale.y += delta * 0.01;
@@ -1385,17 +1392,21 @@ var LeiaWebGLRenderer = function (parameters) {
 
         this.update = function () {
             this.position.copy(this.tarObj.position);
+            //save var _tarPosition in index here 
             this.scale = this.tarObj.scale.x;
+            //save var _holoScreenSize in index here 
             this.tarObj.rotation.setFromRotationMatrix(camera.matrix);
+            
         }
     }
 
     this._holoCamCenter = undefined;
     this.bHoloCamCenterInit = false;
-    var CHoloCamCenter = function (camera) {
+    var CHoloCamCenter = function (camera, _fov) {
         this.position = new THREE.Vector3();
         this.position.copy(camera.position);
-        this.scale = 1;
+        this.fov = _fov;
+        _that.view64fov = this.fov;
 
         var __point = new THREE.Vector3();
         __point.copy(camera.position.clone().sub(camera.targetPosition));
@@ -1411,6 +1422,11 @@ var LeiaWebGLRenderer = function (parameters) {
 
         this.update = function () {
             this.position.copy(this.eyeCenter.position);
+            //save var _camPosition in index here
+            this.fov = _that.view64fov;
+            //console.log("fov: ", this.fov);
+            //save var _camFov in index here
+
         }
     }
 
@@ -1534,6 +1550,8 @@ var LeiaWebGLRenderer = function (parameters) {
 
             this.camControls.attach(this.ObjMesh2[0], false);
             this.tarControls.attach(this.ObjMesh2[1], false);
+            this.ObjMesh2[0].visible = false;
+            this.ObjMesh2[1].visible = false;
             if (bHasCam || tarId == undefined) {
                 scene.add(this.ObjMesh2[0]);
                 scene.add(this.ObjMesh2[1]);
@@ -1746,19 +1764,22 @@ var LeiaWebGLRenderer = function (parameters) {
     }
 
     this.bRendering = true;
-    this.Leia_render = function (scene, camera, renderTarget, forceClear, holoScreenScale) {
+    this.Leia_render = function (scene, camera, renderTarget, forceClear, holoScreenScale, holoCamFov) {
         if (this.bRendering) {
             if (camera.position.x == 0 && camera.position.y != 0 && camera.position.z == 0)
                 camera.position.z = camera.position.y / 100;
+
+            var _holoCamFov = 50;
+            if (holoCamFov !== undefined)
+                _holoCamFov = holoCamFov;
+            if (!this.bHoloCamCenterInit) {
+                this._holoCamCenter = new CHoloCamCenter(camera, _holoCamFov);
+                this.bHoloCamCenterInit = true;
+            }
+
             var _holoScreenScale = 1;
             if (holoScreenScale !== undefined)
                 _holoScreenScale = holoScreenScale;
-
-            //console.log(_viewportWidth, " ", _viewportWidth);
-            if (!this.bHoloCamCenterInit) {
-                this._holoCamCenter = new CHoloCamCenter(camera);
-                this.bHoloCamCenterInit = true;
-            }
             if ((!this.bHoloScreenInit) && camera.position.length() >= 0) {
                 this._holoScreen = new CHoloScreen(camera, _holoScreenScale);
                 this.bHoloScreenInit = true;
