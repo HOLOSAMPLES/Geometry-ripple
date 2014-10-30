@@ -63,5 +63,5 @@ function updateStuff(){
  	requestAnimationFrame( animate );
     updateStuff();
     renderer.setClearColor(new THREE.Color().setRGB(1.0, 1.0, 1.0)); 
-	renderer.Leia_render(scene, camera,undefined,undefined,_holoScreenScale,_camFov);
+	renderer.Leia_render(scene, camera,undefined,undefined,_holoScreenScale,_camFov,_messageFlag);
  }
