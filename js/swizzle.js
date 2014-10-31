@@ -128,7 +128,7 @@ var LeiaWebGLRenderer = function (parameters) {
             var topBunder = _this.screen.top;
             var bottomBunder = _this.screen.top + _this.screen.height;
             if (event.layerX > leftBunder && event.layerX < rightBunder && event.layerY > topBunder && event.layerY < bottomBunder) {
-                event.preventDefault();
+               // event.preventDefault();
                 // event.stopPropagation();
                 _lastPos.copy(getMouseOnScreen(event.layerX, event.layerY));
                 document.addEventListener('mousemove', mousemove, false);
@@ -156,7 +156,7 @@ var LeiaWebGLRenderer = function (parameters) {
             var topBunder = _this.screen.top;
             var bottomBunder = _this.screen.top + _this.screen.height;
             if (event.layerX > leftBunder && event.layerX < rightBunder && event.layerY > topBunder && event.layerY < bottomBunder) {
-                event.preventDefault();
+               // event.preventDefault();
                 //  event.stopPropagation();
                 document.removeEventListener('mousemove', mousemove);
                 document.removeEventListener('mouseup', mouseup);
@@ -399,7 +399,7 @@ var LeiaWebGLRenderer = function (parameters) {
             var bottomBunder = _this.screen.top + _this.screen.height;
             if (event.layerX > leftBunder && event.layerX < rightBunder && event.layerY > topBunder && event.layerY < bottomBunder) {
                 if (_this.enabled === false) return;
-                event.preventDefault();
+                //event.preventDefault();
                 //  event.stopPropagation();
                 if (_state === STATE.NONE) {
                     _state = event.button;
@@ -447,7 +447,7 @@ var LeiaWebGLRenderer = function (parameters) {
             var topBunder = _this.screen.top;
             var bottomBunder = _this.screen.top + _this.screen.height;
             if (event.layerX > leftBunder && event.layerX < rightBunder && event.layerY > topBunder && event.layerY < bottomBunder) {
-                event.preventDefault();
+                //event.preventDefault();
                 // event.stopPropagation();
                 _state = STATE.NONE;
                 document.removeEventListener('mousemove', mousemove);
@@ -766,8 +766,8 @@ var LeiaWebGLRenderer = function (parameters) {
                 _dragging = true;
             } else if (pointer.button == 2 && _this.axis !== null && _this.object.name == "eyeCenter") {
                 if (_this.object == undefined || _dragging == true) return;
-                event.preventDefault();
-                event.stopPropagation();
+               // event.preventDefault();
+                //event.stopPropagation();
                 _that.spanSphereMode = !_that.spanSphereMode;
 
             } else {
@@ -1870,7 +1870,7 @@ var LeiaWebGLRenderer = function (parameters) {
 			this.messageFlag++;
 			
 			if(this.messageFlag > 5){
-				console.log("messageFlag Emulator");
+			//	console.log("messageFlag Emulator");
 				this.messageFlag = 0;
 				var self = this;
 			   (function(){
@@ -1879,9 +1879,8 @@ var LeiaWebGLRenderer = function (parameters) {
 					  if(this.readyState == this.DONE) {
 						if(this.status == 200 && this.response != null ) {
 						  var params =  JSON.parse(this.responseText);
-						  console.log("requested display info:" + this.responseText);
-							
-						  if(params.data != undefined){
+	
+						  if(params.data != undefined && params.type == "tuning"){
 							self._holoCamCenter.fov = params.data._camFov.toFixed(2);
 							self._holoCamCenter.position.x = params.data._camPosition.x.toFixed(2);
 							self._holoCamCenter.position.y = params.data._camPosition.y.toFixed(2);
