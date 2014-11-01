@@ -28,9 +28,10 @@
     <div id="roll" style="display: none;">0</div>
     </body>
     <script>
-        var ShiftX = 0;
+       <script>
+       var ShiftX = 0;
        var ShiftY = 0;
-      
+       var cookieExpireDate;
       function listener(event){ 
         var msg = JSON.parse(event.data);   
         if(msg.type ==="sensor") {
@@ -53,13 +54,15 @@
       }
       function InitLC()
       {
+          var exdate=new Date();
+          exdate.setDate(exdate.getDate() + 10);
+          cookieExpireDate = exdate.toGMTString();
             var cookieInfo = document.cookie.split(';');
             for(var i=0; i<cookieInfo.length; i++) {
                 var c = cookieInfo[i].trim();
                 if (c.indexOf("LEIA_shiftX=") == 0) ShiftX=parseInt(c.substring(12, c.length));
                 if (c.indexOf("LEIA_shiftY=") == 0) ShiftY=parseInt(c.substring(12, c.length));
             }
-     
         postShiftMessage();
         document.body.style.marginTop = ShiftY + "px";
         document.body.style.marginLeft = ShiftX + "px";
@@ -75,14 +78,12 @@
                if(this.status == 200 && this.response != null ) {
                  var params =  JSON.parse(this.responseText);
                    console.log("requested display info:" + this.responseText);
-                    if(params.data != undefined && params.type == "ShiftParam"){
+                    if(params.data != undefined){
                       ShiftX = params.data.x;
                       ShiftY = params.data.y;
                       document.body.style.marginTop = ShiftY + "px";
-                      document.body.style.marginLeft = ShiftX + "px";
-                      
+                      document.body.style.marginLeft = ShiftX + "px"; 
                     }
-
                  return;
                }else{
                  console.log("something wrong");
@@ -99,32 +100,35 @@
        document.onkeydown=function(event)
        {
          if(event && event.keyCode == 73){
-     
             ShiftY =  ShiftY - 1;
-            document.cookie = "LEIA_shiftY="+ ShiftY.toString()+";path=/;";
-    	     document.body.style.marginTop = ShiftY + "px";
+            var str = "LEIA_shiftY="+ ShiftY.toString()+";path=/;" + "session=false;"+ "expires=" + cookieExpireDate + ";";
+            document.cookie = str;
+    	    document.body.style.marginTop = ShiftY + "px";
             postShiftMessage();
           }
          if(event && event.keyCode == 74){
              ShiftX =  ShiftX - 1;
-             document.cookie = "LEIA_shiftX="+ ShiftX.toString()+";path=/;";
-    	      document.body.style.marginLeft = ShiftX + "px";
-              postShiftMessage();
+             var str = "LEIA_shiftX="+ ShiftX.toString()+";path=/;" + "session=false;"+ "expires=" + cookieExpireDate + ";";
+             document.cookie = str;
+    	     document.body.style.marginLeft = ShiftX + "px";
+             postShiftMessage();
            }
          if(event && event.keyCode == 75){
             ShiftY =  ShiftY + 1;
-            document.cookie = "LEIA_shiftY="+ ShiftY.toString()+";path=/;";
-    	     document.body.style.marginTop = ShiftY + "px";
-             postShiftMessage();
-           }
+            var str = "LEIA_shiftY="+ ShiftY.toString()+";path=/;" + "session=false;"+ "expires=" + cookieExpireDate + ";";
+            document.cookie = str;
+    	    document.body.style.marginTop = ShiftY + "px";
+            postShiftMessage();
+          }
          if(event && event.keyCode == 76){
-               ShiftX =  ShiftX + 1;
-             document.cookie = "LEIA_shiftX="+ ShiftX.toString()+";path=/;";
-    	      document.body.style.marginLeft = ShiftX + "px";
-             postShiftMessage();
-           }
-          
-       }
+            ShiftX =  ShiftX + 1;
+            var str = "LEIA_shiftX="+ ShiftX.toString()+";path=/;" + "session=false;"+ "expires=" + cookieExpireDate + ";";
+            document.cookie = str;
+    	    document.body.style.marginLeft = ShiftX + "px";
+            postShiftMessage();
+        } 
+    }
     </script>
     <script src="js/default.js"></script>
     </html>
+    
